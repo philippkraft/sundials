@@ -478,7 +478,7 @@ static int PSolve(realtype tt, N_Vector cc, N_Vector cp,
 
   N_VScale(ONE, rvec, zvec);
 
-#pragma omp parallel for collapse(2) default(shared) private(jx, jy, zxy, Pxy, pivot) schedule(static) num_threads(webdata->nthreads)
+#pragma omp parallel for default(shared) private(jx, jy, zxy, Pxy, pivot) schedule(static) num_threads(webdata->nthreads)
   for (jx = 0; jx < MX; jx++) {
     for (jy = 0; jy <MY; jy++) {
       

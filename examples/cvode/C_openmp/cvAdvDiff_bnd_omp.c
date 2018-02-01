@@ -301,20 +301,19 @@ static int Jac(realtype t, N_Vector u, N_Vector fu,
   horac = data->hacoef;
   verdc = data->vdcoef;
 
-#pragma omp parallel for collapse(2) default(shared) private(i, j, k, kthCol) num_threads(data->nthreads) 
-  for (j=1; j <= MY; j++) {
-    for (i=1; i <= MX; i++) {
-      k = j-1 + (i-1)*MY;
-      kthCol = SUNBandMatrix_Column(J,k);
+#pragma omp parallel for default(shared) private(i, j, k, kthCol) num_threads(data->nthreads) 
+  for (k=0; k < MX * MY; k++) {
+	j = k / MX + 1;
+	i = k % MX + 1;
+	kthCol = SUNBandMatrix_Column(J,k);
 
-      /* set the kth column of J */
+	/* set the kth column of J */
 
-      SM_COLUMN_ELEMENT_B(kthCol,k,k) = -TWO*(verdc+hordc);
-      if (i != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-MY,k) = hordc + horac;
-      if (i != MX) SM_COLUMN_ELEMENT_B(kthCol,k+MY,k) = hordc - horac;
-      if (j != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-1,k)  = verdc;
-      if (j != MY) SM_COLUMN_ELEMENT_B(kthCol,k+1,k)  = verdc;
-    }
+	SM_COLUMN_ELEMENT_B(kthCol,k,k) = -TWO*(verdc+hordc);
+	if (i != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-MY,k) = hordc + horac;
+	if (i != MX) SM_COLUMN_ELEMENT_B(kthCol,k+MY,k) = hordc - horac;
+	if (j != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-1,k)  = verdc;
+	if (j != MY) SM_COLUMN_ELEMENT_B(kthCol,k+1,k)  = verdc;
   }
 
   return(0);
