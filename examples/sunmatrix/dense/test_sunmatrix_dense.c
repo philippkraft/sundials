@@ -3,19 +3,15 @@
  * Programmer(s): Daniel Reynolds @ SMU
  *                David Gardner @ LLNL
  * -----------------------------------------------------------------
- * LLNS/SMU Copyright Start
- * Copyright (c) 2017, Southern Methodist University and 
- * Lawrence Livermore National Security
- *
- * This work was performed under the auspices of the U.S. Department 
- * of Energy by Southern Methodist University and Lawrence Livermore 
- * National Laboratory under Contract DE-AC52-07NA27344.
- * Produced at Southern Methodist University and the Lawrence 
- * Livermore National Laboratory.
- *
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2019, Lawrence Livermore National Security
+ * and Southern Methodist University.
  * All rights reserved.
- * For details, see the LICENSE file.
- * LLNS/SMU Copyright End
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the testing routine to check the SUNMatrix Dense module 
  * implementation. 
@@ -70,11 +66,18 @@ int main(int argc, char *argv[])
   square = (matrows == matcols) ? 1 : 0;
   printf("\nDense matrix test: size %ld by %ld\n\n",
          (long int) matrows, (long int) matcols);
+
+  /* Initialize vectors and matrices to NULL */
+  x = NULL;
+  y = NULL;
+  A = NULL;
+  I = NULL;
   
   /* Create vectors and matrices */
   x = N_VNew_Serial(matcols);
   y = N_VNew_Serial(matrows);
   A = SUNDenseMatrix(matrows, matcols);
+  I = NULL;
   if (square)
     I = SUNDenseMatrix(matrows, matcols);
   
@@ -110,9 +113,10 @@ int main(int argc, char *argv[])
   fails += Test_SUNMatClone(A, 0);
   fails += Test_SUNMatCopy(A, 0);
   fails += Test_SUNMatZero(A, 0);
-  fails += Test_SUNMatScaleAdd(A, I, 0);
-  if (square) 
+  if (square) {
+    fails += Test_SUNMatScaleAdd(A, I, 0);
     fails += Test_SUNMatScaleAddI(A, I, 0);
+  }
   fails += Test_SUNMatMatvec(A, x, y, 0);
   fails += Test_SUNMatSpace(A, 0);
 

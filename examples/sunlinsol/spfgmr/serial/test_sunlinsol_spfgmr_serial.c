@@ -2,19 +2,15 @@
  * ----------------------------------------------------------------- 
  * Programmer(s): Daniel Reynolds @ SMU
  * -----------------------------------------------------------------
- * LLNS/SMU Copyright Start
- * Copyright (c) 2017, Southern Methodist University and 
- * Lawrence Livermore National Security
- *
- * This work was performed under the auspices of the U.S. Department 
- * of Energy by Southern Methodist University and Lawrence Livermore 
- * National Laboratory under Contract DE-AC52-07NA27344.
- * Produced at Southern Methodist University and the Lawrence 
- * Livermore National Laboratory.
- *
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2019, Lawrence Livermore National Security
+ * and Southern Methodist University.
  * All rights reserved.
- * For details, see the LICENSE file.
- * LLNS/SMU Copyright End
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the testing routine to check the SUNLinSol SPFGMR module 
  * implementation. 
@@ -69,7 +65,7 @@ static realtype urand();
 sunindextype problem_size;
 
 /* ----------------------------------------------------------------------
- * SUNSPFGMR Linear Solver Testing Routine
+ * SUNLinSol_SPFGMR Linear Solver Testing Routine
  *
  * We run multiple tests to exercise this solver:
  * 1. simple tridiagonal system (no preconditioning)
@@ -171,19 +167,19 @@ int main(int argc, char *argv[])
   N_VConst(FIVE, ProbData.d);
   
   /* Create SPFGMR linear solver */
-  LS = SUNSPFGMR(x, PREC_RIGHT, maxl);
+  LS = SUNLinSol_SPFGMR(x, PREC_RIGHT, maxl);
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_ITERATIVE, 0);
   fails += Test_SUNLinSolSetATimes(LS, &ProbData, ATimes, 0);
   fails += Test_SUNLinSolSetPreconditioner(LS, &ProbData, PSetup, PSolve, 0);
   fails += Test_SUNLinSolSetScalingVectors(LS, ProbData.s1, ProbData.s2, 0);
   fails += Test_SUNLinSolInitialize(LS, 0);
   fails += Test_SUNLinSolSpace(LS, 0);
-  fails += SUNSPFGMRSetGSType(LS, gstype);  
+  fails += SUNLinSol_SPFGMRSetGSType(LS, gstype);  
   if (fails) {
-    printf("FAIL: SUNSPFGMR module failed %i initialization tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module failed %i initialization tests\n\n", fails);
     return 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module passed all initialization tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module passed all initialization tests\n\n");
   }
 
   
@@ -201,7 +197,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_NONE);  
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_NONE);  
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -211,10 +207,10 @@ int main(int argc, char *argv[])
   
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 1, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 1, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 1, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 1, passed all tests\n\n");
   }
 
 
@@ -232,7 +228,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_RIGHT);  
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_RIGHT);  
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -242,10 +238,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 2, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 2, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 2, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 2, passed all tests\n\n");
   }
 
 
@@ -265,7 +261,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_NONE);  
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_NONE);  
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -275,10 +271,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 3, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 3, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 3, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 3, passed all tests\n\n");
   }
 
 
@@ -298,7 +294,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_RIGHT);  
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_RIGHT);  
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -308,10 +304,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 4, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 4, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 4, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 4, passed all tests\n\n");
   }
 
 
@@ -331,7 +327,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_NONE);
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_NONE);
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -341,10 +337,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 5, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 5, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 5, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 5, passed all tests\n\n");
   }
 
 
@@ -364,7 +360,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPFGMRSetPrecType(LS, PREC_RIGHT);  
+  fails += SUNLinSol_SPFGMRSetPrecType(LS, PREC_RIGHT);  
   fails += Test_SUNLinSolSetup(LS, NULL, 0);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -374,10 +370,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPFGMR module, problem 6, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPFGMR module, problem 6, failed %i tests\n\n", fails);
     passfail += 1;
   } else {
-    printf("SUCCESS: SUNSPFGMR module, problem 6, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPFGMR module, problem 6, passed all tests\n\n");
   }
 
 

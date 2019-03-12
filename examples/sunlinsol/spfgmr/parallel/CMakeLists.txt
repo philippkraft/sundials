@@ -1,19 +1,15 @@
 # ---------------------------------------------------------------
 # Programmer(s): Daniel Reynolds @ SMU
 # ---------------------------------------------------------------
-# LLNS/SMU Copyright Start
-# Copyright (c) 2017, Southern Methodist University and
-# Lawrence Livermore National Security
-#
-# This work was performed under the auspices of the U.S. Department
-# of Energy by Southern Methodist University and Lawrence Livermore
-# National Laboratory under Contract DE-AC52-07NA27344.
-# Produced at Southern Methodist University and the Lawrence
-# Livermore National Laboratory.
-#
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS/SMU Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # CMakeLists.txt file for sunlinsol SPFGMR parallel examples
 # ---------------------------------------------------------------
@@ -50,13 +46,13 @@ ENDIF()
 # Set-up linker flags and link libraries
 SET(SUNDIALS_LIBS ${NVEC_LIB} ${SUNLINSOL_LIB} ${EXTRA_LINK_LIBS})
 
-IF(MPI_MPICC)
-  # use MPI_MPICC as the compiler
-  SET(CMAKE_C_COMPILER ${MPI_MPICC})
-ELSE(MPI_MPICC)
+IF(MPI_C_COMPILER)
+  # use MPI wrapper as the compiler
+  SET(CMAKE_C_COMPILER ${MPI_C_COMPILER})
+ELSE()
   # add MPI_INCLUDE_PATH to include directories
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-ENDIF(MPI_MPICC)
+ENDIF()
 
 
 # Add the build and install targets for each example
@@ -92,7 +88,7 @@ FOREACH(example_tuple ${sunlinsol_spfgmr_examples})
     # libraries to link against
     TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
 
-    IF(NOT MPI_MPICC)
+    IF(NOT MPI_C_COMPILER)
       TARGET_LINK_LIBRARIES(${example} ${MPI_LIBRARIES})
     ENDIF()
   ENDIF()

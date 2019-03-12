@@ -1,22 +1,15 @@
 # ---------------------------------------------------------------
 # Programmer:  Daniel R. Reynolds @ SMU
 # ---------------------------------------------------------------
-# LLNS/SMU Copyright Start
-# Copyright (c) 2015, Southern Methodist University and
-# Lawrence Livermore National Security
-#
-# This work was performed under the auspices of the U.S. Department
-# of Energy by Southern Methodist University and Lawrence Livermore
-# National Laboratory under Contract DE-AC52-07NA27344.
-# Produced at Southern Methodist University and the Lawrence
-# Livermore National Laboratory.
-#
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS/SMU Copyright End
-# Copyright (c) 2013, Southern Methodist University.
-# All rights reserved.
-# For details, see the LICENSE file.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # -----------------------------------------------------------------
 # CMakeLists.txt file for ARKODE C++ parallel examples
 # -----------------------------------------------------------------
@@ -34,13 +27,11 @@ SET(ARKODE_extras
   plot_heat2D.py
   )
 
-# Check whether we use MPI compiler scripts.
-# If yes, then change the C compiler to the MPICC script.
-# If not, then add the MPI include directory for MPI headers.
+IF(MPI_CXX_COMPILER)
+  # use MPI wrapper as the compiler
+  SET(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER})
 
-IF(MPI_MPICXX)
-  # use MPI_MPICXX as the compiler
-  SET(CMAKE_CXX_COMPILER ${MPI_MPICXX})
+  # disable C++ extensions (for known wrappers)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX -DLAM_BUILDING")
 ELSE()
   # add MPI_INCLUDE_PATH to include directories
@@ -85,7 +76,7 @@ FOREACH(example_tuple ${ARKODE_examples})
   # libraries to link against
   TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
 
-  IF(NOT MPI_MPICXX)
+  IF(NOT MPI_CXX_COMPILER)
     TARGET_LINK_LIBRARIES(${example} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARIES})
   ENDIF()
 

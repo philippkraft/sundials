@@ -1,22 +1,15 @@
 # ---------------------------------------------------------------
 # Programmer:  Daniel R. Reynolds @ SMU
 # ---------------------------------------------------------------
-# LLNS/SMU Copyright Start
-# Copyright (c) 2015, Southern Methodist University and
-# Lawrence Livermore National Security
-#
-# This work was performed under the auspices of the U.S. Department
-# of Energy by Southern Methodist University and Lawrence Livermore
-# National Laboratory under Contract DE-AC52-07NA27344.
-# Produced at Southern Methodist University and the Lawrence
-# Livermore National Laboratory.
-#
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS/SMU Copyright End
-# Copyright (c) 2013, Southern Methodist University.
-# All rights reserved.
-# For details, see the LICENSE file.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # CMakeLists.txt file for the FARKODE parallel examples
 # ---------------------------------------------------------------
@@ -34,13 +27,9 @@ SET(FARKODE_examples
 SET(ARKODE_extras
   )
 
-# Check whether we use MPI compiler scripts.
-# If yes, then change the Fortran compiler to the MPIF77 script.
-# If not, then add the MPI include directory for MPI headers.
-
-IF(MPI_MPIF77)
-  # use MPI_MPIF77 as the compiler
-  SET(CMAKE_Fortran_COMPILER ${MPI_MPIF77})
+IF(MPI_Fortran_COMPILER)
+  # use MPI wrapper as the compiler
+  SET(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
 ELSE()
   # add MPI_INCLUDE_PATH to include directories
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
@@ -88,7 +77,7 @@ FOREACH(example_tuple ${FARKODE_examples})
   # libraries to link against
   TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
 
-  IF(NOT MPI_MPIF77)
+  IF(NOT MPI_Fortran_COMPILER)
     TARGET_LINK_LIBRARIES(${example} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARIES})
   ENDIF()
 

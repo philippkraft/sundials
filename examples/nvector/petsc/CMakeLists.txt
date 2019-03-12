@@ -1,15 +1,15 @@
 # ---------------------------------------------------------------
 # Programmer:  Steven Smith @ LLNL
 # ---------------------------------------------------------------
-# LLNS Copyright Start
-# Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department 
-# of Energy by Lawrence Livermore National Laboratory in part under 
-# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
-# Produced at the Lawrence Livermore National Laboratory.
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # CMakeLists.txt file for PETSc nvector examples
 # ---------------------------------------------------------------
@@ -19,10 +19,8 @@
 
 # Examples using SUNDIALS PETSc nvector
 SET(nvector_petsc_examples
-  "test_nvector_petsc\;\;\;\;"          # run sequentially
-  "test_nvector_petsc\;1000 0\;\;\;"    # run sequentially with arguments
-  "test_nvector_petsc\;\;1\;4\;"        # run parallel on 4 procs
-  "test_nvector_petsc\;1000 0\;1\;4\;"  # run parallel on 4 procs with arguments
+  "test_nvector_petsc\;1000 0\;\;\;"    # run sequentially
+  "test_nvector_petsc\;1000 0\;1\;4\;"  # run 4 procs
   )
 
 # Dependencies for nvector examples
@@ -48,13 +46,13 @@ SET(SUNDIALS_LIBS ${NVECS_LIB} ${EXTRA_LINK_LIBS})
 
 LIST(APPEND SUNDIALS_LIBS ${PETSC_LIBRARIES})
 
-IF(MPI_MPICC)
-  # use MPI_MPICC as the compiler
-  SET(CMAKE_C_COMPILER ${MPI_MPICC})
-ELSE(MPI_MPICC)
+IF(MPI_C_COMPILER)
+  # use MPI wrapper as the compiler
+  SET(CMAKE_C_COMPILER ${MPI_C_COMPILER})
+ELSE()
   # add MPI_INCLUDE_PATH to include directories
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-ENDIF(MPI_MPICC)
+ENDIF()
 
 
 # Add the build and install targets for each nvector example
@@ -80,7 +78,7 @@ FOREACH(example_tuple ${nvector_petsc_examples})
     # libraries to link against
     TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
 
-    IF(NOT MPI_MPICC)
+    IF(NOT MPI_C_COMPILER)
       TARGET_LINK_LIBRARIES(${example} ${MPI_LIBRARIES})
     ENDIF()
   ENDIF()

@@ -2,19 +2,15 @@
  * ----------------------------------------------------------------- 
  * Programmer(s): Daniel Reynolds, Ashley Crawford @ SMU
  * -----------------------------------------------------------------
- * LLNS/SMU Copyright Start
- * Copyright (c) 2017, Southern Methodist University and 
- * Lawrence Livermore National Security
- *
- * This work was performed under the auspices of the U.S. Department 
- * of Energy by Southern Methodist University and Lawrence Livermore 
- * National Laboratory under Contract DE-AC52-07NA27344.
- * Produced at Southern Methodist University and the Lawrence 
- * Livermore National Laboratory.
- *
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2019, Lawrence Livermore National Security
+ * and Southern Methodist University.
  * All rights reserved.
- * For details, see the LICENSE file.
- * LLNS/SMU Copyright End
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the testing routine to check the SUNLinSol Band module 
  * implementation. 
@@ -33,7 +29,7 @@
 
 
 /* ----------------------------------------------------------------------
- * SUNBandLinearSolver Testing Routine
+ * SUNLinSol_Band Testing Routine
  * --------------------------------------------------------------------*/
 int main(int argc, char *argv[]) 
 {
@@ -77,8 +73,8 @@ int main(int argc, char *argv[])
          (long int) cols, (long int) uband, (long int) lband);
 
   /* Create matrices and vectors */
-  A = SUNBandMatrix(cols, uband, lband, lband+uband);
-  B = SUNBandMatrix(cols, uband, lband, lband+uband);
+  A = SUNBandMatrix(cols, uband, lband);
+  B = SUNBandMatrix(cols, uband, lband);
   x = N_VNew_Serial(cols);
   y = N_VNew_Serial(cols);
   b = N_VNew_Serial(cols);
@@ -103,6 +99,14 @@ int main(int argc, char *argv[])
   fails += SUNMatScaleAddI( ONE/(uband+lband+1), A );
   if (fails) {
     printf("FAIL: SUNLinSol SUNMatScaleAddI failure\n");
+
+    /* Free matrices and vectors */
+    SUNMatDestroy(A);
+    SUNMatDestroy(B);
+    N_VDestroy(x);
+    N_VDestroy(y);
+    N_VDestroy(b);
+
     return(1);
   }
 
@@ -114,16 +118,24 @@ int main(int argc, char *argv[])
   fails = SUNMatMatvec(A, x, b);
   if (fails) {
     printf("FAIL: SUNLinSol SUNMatMatvec failure\n");
+
+    /* Free matrices and vectors */
+    SUNMatDestroy(A);
+    SUNMatDestroy(B);
+    N_VDestroy(x);
+    N_VDestroy(y);
+    N_VDestroy(b);
+
     return(1);
   }
   
   /* Create banded linear solver */
-  LS = SUNBandLinearSolver(x, A);
+  LS = SUNLinSol_Band(x, A);
   
   /* Run Tests */
   fails += Test_SUNLinSolInitialize(LS, 0);
   fails += Test_SUNLinSolSetup(LS, A, 0);
-  fails += Test_SUNLinSolSolve(LS, A, x, b, RCONST(1.0e-15), 0);
+  fails += Test_SUNLinSolSolve(LS, A, x, b, 10*UNIT_ROUNDOFF, 0);
  
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_DIRECT, 0);
   fails += Test_SUNLinSolLastFlag(LS, 0);
@@ -150,6 +162,7 @@ int main(int argc, char *argv[])
   SUNMatDestroy(B);
   N_VDestroy(x);
   N_VDestroy(y);
+  N_VDestroy(b);
 
   return(fails);
 }

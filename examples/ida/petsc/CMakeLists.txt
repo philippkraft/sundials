@@ -1,15 +1,15 @@
 # ---------------------------------------------------------------
 # Programmer:  Slaven Peles, Eddy Banks @ LLNL
 # ---------------------------------------------------------------
-# LLNS Copyright Start
-# Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department
-# of Energy by Lawrence Livermore National Laboratory in part under
-# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
-# Produced at the Lawrence Livermore National Laboratory.
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2019, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # CMakeLists.txt file for IDA PETSc examples
 # ---------------------------------------------------------------
@@ -23,12 +23,9 @@ SET(IDA_examples
   "idaHeat2D_kry_petsc\;1\;4\;develop"
   )
 
-# Check whether we use MPI compiler scripts.
-# If yes, then change the C compiler to the MPICC script.
-# If not, then add the MPI include directory for MPI headers.
-IF(MPI_MPICC)
-  # use MPI_MPICC as the compiler
-  SET(CMAKE_C_COMPILER ${MPI_MPICC})
+IF(MPI_C_COMPILER)
+  # use MPI wrapper as the compiler
+  SET(CMAKE_C_COMPILER ${MPI_C_COMPILER})
 ELSE()
   # add MPI_INCLUDE_PATH to include directories
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
@@ -71,7 +68,7 @@ FOREACH(example_tuple ${IDA_examples})
   # libraries to link against
   TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS} ${PETSC_LIBRARIES})
 
-  IF(NOT MPI_MPICC)
+  IF(NOT MPI_C_COMPILER)
     TARGET_LINK_LIBRARIES(${example} ${MPI_LIBRARY} ${MPI_EXTRA_LIBRARIES})
   ENDIF()
 

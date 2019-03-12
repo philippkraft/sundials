@@ -2,19 +2,15 @@
  * ----------------------------------------------------------------- 
  * Programmer(s): Daniel Reynolds @ SMU
  * -----------------------------------------------------------------
- * LLNS/SMU Copyright Start
- * Copyright (c) 2017, Southern Methodist University and 
- * Lawrence Livermore National Security
- *
- * This work was performed under the auspices of the U.S. Department 
- * of Energy by Southern Methodist University and Lawrence Livermore 
- * National Laboratory under Contract DE-AC52-07NA27344.
- * Produced at Southern Methodist University and the Lawrence 
- * Livermore National Laboratory.
- *
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2019, Lawrence Livermore National Security
+ * and Southern Methodist University.
  * All rights reserved.
- * For details, see the LICENSE file.
- * LLNS/SMU Copyright End
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * This is the testing routine to check the SUNLinSol SPTFQMR module 
  * implementation. 
@@ -73,7 +69,7 @@ static realtype urand();
 sunindextype local_problem_size;
 
 /* ----------------------------------------------------------------------
- * SUNSPTFQMR Linear Solver Testing Routine
+ * SUNLinSol_SPTFQMR Linear Solver Testing Routine
  *
  * We run multiple tests to exercise this solver:
  * 1. simple tridiagonal system (no preconditioning)
@@ -103,7 +99,6 @@ int main(int argc, char *argv[])
 {
   int             fails=0;          /* counter for test failures */
   int             passfail=0;       /* overall pass/fail flag    */
-  int             mpierr;           /* mpi error flag            */
   SUNLinearSolver LS;               /* linear solver object      */
   N_Vector        xhat, x, b;       /* test vectors              */
   UserData        ProbData;         /* problem data structure    */
@@ -195,7 +190,7 @@ int main(int argc, char *argv[])
   N_VConst(FIVE, ProbData.d);
   
   /* Create SPTFQMR linear solver */
-  LS = SUNSPTFQMR(x, pretype, maxl);
+  LS = SUNLinSol_SPTFQMR(x, pretype, maxl);
   fails += Test_SUNLinSolGetType(LS, SUNLINEARSOLVER_ITERATIVE,
                                  ProbData.myid);
   fails += Test_SUNLinSolSetATimes(LS, &ProbData, ATimes, ProbData.myid);
@@ -206,10 +201,10 @@ int main(int argc, char *argv[])
   fails += Test_SUNLinSolInitialize(LS, ProbData.myid);
   fails += Test_SUNLinSolSpace(LS, ProbData.myid);
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module failed %i initialization tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module failed %i initialization tests\n\n", fails);
     return 1;
   } else if (ProbData.myid == 0)
-    printf("SUCCESS: SUNSPTFQMR module passed all initialization tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module passed all initialization tests\n\n");
 
   
   /*** Test 1: simple Poisson-like solve (no preconditioning) ***/
@@ -226,7 +221,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, PREC_NONE);  
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, PREC_NONE);  
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -236,10 +231,10 @@ int main(int argc, char *argv[])
   
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 1, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 1, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 1, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 1, passed all tests\n\n");
   }
 
   
@@ -257,7 +252,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, pretype);  
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, pretype);  
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -267,10 +262,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 2, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 2, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 2, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 2, passed all tests\n\n");
   }
 
   
@@ -290,7 +285,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, PREC_NONE);  
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, PREC_NONE);  
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -300,10 +295,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 3, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 3, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 3, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 3, passed all tests\n\n");
   }
 
   
@@ -323,7 +318,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, pretype);  
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, pretype);  
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -333,10 +328,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 4, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 4, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 4, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 4, passed all tests\n\n");
   }
 
   
@@ -356,7 +351,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, PREC_NONE);
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, PREC_NONE);
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -366,10 +361,10 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 5, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 5, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 5, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 5, passed all tests\n\n");
   }
 
   
@@ -389,7 +384,7 @@ int main(int argc, char *argv[])
   if (check_flag(&fails, "ATimes", 1)) return 1;
 
   /* Run tests with this setup */
-  fails += SUNSPTFQMRSetPrecType(LS, pretype);  
+  fails += SUNLinSol_SPTFQMRSetPrecType(LS, pretype);  
   fails += Test_SUNLinSolSetup(LS, NULL, ProbData.myid);
   fails += Test_SUNLinSolSolve(LS, NULL, x, b, tol, ProbData.myid);
   fails += Test_SUNLinSolLastFlag(LS, ProbData.myid);
@@ -399,14 +394,14 @@ int main(int argc, char *argv[])
 
   /* Print result */
   if (fails) {
-    printf("FAIL: SUNSPTFQMR module, problem 6, failed %i tests\n\n", fails);
+    printf("FAIL: SUNLinSol_SPTFQMR module, problem 6, failed %i tests\n\n", fails);
     passfail += 1;
   } else if (ProbData.myid == 0) {
-    printf("SUCCESS: SUNSPTFQMR module, problem 6, passed all tests\n\n");
+    printf("SUCCESS: SUNLinSol_SPTFQMR module, problem 6, passed all tests\n\n");
   }
 
   /* check if any other process failed */
-  mpierr = MPI_Allreduce(&passfail, &fails, 1, MPI_INT, MPI_MAX, ProbData.comm);
+  (void) MPI_Allreduce(&passfail, &fails, 1, MPI_INT, MPI_MAX, ProbData.comm);
   
   /* Free solver and vectors */
   SUNLinSolFree(LS);
